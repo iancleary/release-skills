@@ -1,4 +1,5 @@
 [release]
+runner_protocol = "prepared-v1"
 name = "example-calver-crate"
 version_source = "Cargo.toml"
 runner = [
@@ -9,8 +10,6 @@ runner = [
   "--lockfile", "Cargo.lock",
   "--tag-prefix", "",
   "--branch", "main",
-  "--check", "cargo build --locked --verbose",
-  "--check", "cargo test --locked --verbose",
 ]
 dry_run_args = ["--dry-run"]
 current_version_command = [

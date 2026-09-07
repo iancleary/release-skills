@@ -1,4 +1,5 @@
 [release]
+runner_protocol = "prepared-v1"
 name = "release-skills"
 version_source = "VERSION"
 runner = [
@@ -7,7 +8,6 @@ runner = [
   "--version-file", "VERSION",
   "--tag-prefix", "v",
   "--branch", "main",
-  "--check", "./scripts/check.sh",
 ]
 dry_run_args = ["--dry-run"]
 current_version_command = [

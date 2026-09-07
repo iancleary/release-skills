@@ -14,6 +14,19 @@ The checked-in `release.toml` and `scripts/release.py` files are the contract.
 The TOML file names the runner and read-only checks. Commands are string arrays;
 the Python runner executes them directly without a shell.
 
+For prepared-v1 contracts, run enforces the TOML checks against prepared version
+files. Do not duplicate checks in runner arguments. Plan is descriptive: its
+ready value is null until execution verifies prerequisites. Use the plan's
+exact version, target_commit, and config_sha256 with --version, --expected-head,
+and --expected-config for dry-run and apply. Stop on changed inputs and replan.
+
+For a GitHub release that failed after tag push, explicitly use --resume with
+the exact --version and --expected-head of the release tag. Inspect the tagged
+commit first. Resume verifies the remote tag, reruns checks, and only completes
+publication. Do not use --bump during recovery. Missing or conflicting tags
+require manual inspection. See the installed create-release-process template
+README for the full protocol when available.
+
 For ordinary SemVer releases, pass the intended bump to the runner:
 
 ```sh

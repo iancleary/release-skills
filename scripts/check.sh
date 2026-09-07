@@ -82,6 +82,10 @@ def option_value(runner: list[str], option: str) -> str:
         raise SystemExit(f"missing runner option {option}") from exc
 
 for name, document in parsed.items():
+    if document["release"].get("runner_protocol") != "prepared-v1":
+        raise SystemExit(f"{name}: must enforce prepared checks")
+    if "--check" in document["release"]["runner"]:
+        raise SystemExit(f"{name}: declare checks once in [checks]")
     if not name.startswith("cargo-"):
         continue
     runner = document["release"]["runner"]

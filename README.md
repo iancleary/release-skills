@@ -21,6 +21,11 @@ This repository uses SemVer for its own releases. Consumer repositories keep
 their own version policy. Exact consumer versions are opaque Git-tag-safe
 strings; only runners that offer `--bump major|minor|patch` require SemVer.
 
+The [shared execution contract](skills/create-release-process/templates/release/README.md)
+defines enforced checks, descriptive plans, consumer version validation, GitHub
+publication recovery, and checksums for vendored runners. Consumer policy stays
+in TOML and small helpers so the runner can be updated without local edits.
+
 ## Install
 
 See [`install.md`](install.md) for the agent-driven installation contract. To

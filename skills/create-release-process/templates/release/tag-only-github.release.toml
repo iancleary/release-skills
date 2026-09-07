@@ -1,11 +1,11 @@
 [release]
+runner_protocol = "prepared-v1"
 name = "example-tag-only-project"
 runner = [
   "uv", "run", "scripts/release.py", "tag-release",
   "--provider", "github",
   "--tag-prefix", "",
   "--branch", "main",
-  "--check", "./scripts/check.sh",
 ]
 dry_run_args = ["--dry-run"]
 publish = true

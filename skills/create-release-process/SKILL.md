@@ -85,6 +85,14 @@ Copy the closest template and `templates/release/scripts/release.py` into the
 target repo. Edit the copies. Do not rebuild the same `release.toml` shape from
 scratch when one of these templates is close.
 
+Keep the runner unchanged. Customize TOML and small consumer policy helpers.
+Read `templates/release/README.md` for check enforcement, the prepared-v1
+protocol, plan guards, recovery, and runner provenance before adapting a template.
+Declare checks once in `[checks].commands`. Use `validate_version_command` to
+reject versions that violate consumer policy. Record the upstream commit and
+runner checksum in `[runner_source]` and test the consumer contract in an
+isolated repository before replacing its previous release entrypoint.
+
 When creating or updating the workflow:
 
 - create or update a checked-in release runner

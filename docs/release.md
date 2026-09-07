@@ -50,6 +50,14 @@ The runner:
 GitHub generates release notes by default. Pass `--notes-file <path>` when a
 release needs curated notes.
 
+Checks are declared once in `[checks].commands` and enforced after VERSION is
+prepared through `runner_protocol = "prepared-v1"`. Failed checks restore VERSION
+before any Git mutation. Plan reports `ready: null`; pass its exact version,
+target_commit and config_sha256 as --version, --expected-head and
+--expected-config during execution. Read the
+[shared contract](../skills/create-release-process/templates/release/README.md)
+for verified GitHub publication recovery and consumer upgrade instructions.
+
 Run apply only from a clean `main` branch with a configured `origin` and valid
 GitHub CLI authentication. Apply is public and mutating. It requires an explicit
 release request.
