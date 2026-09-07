@@ -1,0 +1,28 @@
+[release]
+name = "example-exact-version-crate"
+version_source = "Cargo.toml"
+runner = [
+  "uv", "run", "scripts/release.py", "cargo-release",
+  "--provider", "github",
+  "--version-source", "Cargo.toml",
+  "--version-target", "Cargo.toml",
+  "--lockfile", "Cargo.lock",
+  "--tag-prefix", "v",
+  "--branch", "main",
+  "--check", "cargo build --locked --verbose",
+  "--check", "cargo test --locked --verbose",
+  "--notes-required",
+]
+dry_run_args = ["--dry-run"]
+current_version_command = [
+  "uv", "run", "scripts/release.py", "cargo-current-version",
+  "--version-source", "Cargo.toml",
+]
+publish = true
+notes_file = "release-notes.md"
+
+[checks]
+commands = [
+  ["cargo", "build", "--locked", "--verbose"],
+  ["cargo", "test", "--locked", "--verbose"],
+]
