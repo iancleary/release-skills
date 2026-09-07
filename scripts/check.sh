@@ -70,6 +70,7 @@ expected = {
     "cargo-semver-gitea.release.toml",
     "cargo-semver-github.release.toml",
     "semver-version-file-github.release.toml",
+    "tag-only-github.release.toml",
 }
 if set(parsed) != expected:
     raise SystemExit("release template set does not match the repository contract")
@@ -116,6 +117,14 @@ if version_file["runner"][:4] != [
     raise SystemExit("version-file template must use the bundled Python runner")
 if option_value(version_file["runner"], "--provider") != "github":
     raise SystemExit("version-file template must select the GitHub provider")
+
+tag_only = parsed["tag-only-github.release.toml"]["release"]
+if tag_only["runner"][:4] != [
+    "uv", "run", "scripts/release.py", "tag-release"
+]:
+    raise SystemExit("tag-only template must use the bundled Python runner")
+if option_value(tag_only["runner"], "--provider") != "github":
+    raise SystemExit("tag-only template must select the GitHub provider")
 
 compile((templates / "scripts" / "calver_day_serial.py").read_text(),
         "calver_day_serial.py", "exec")

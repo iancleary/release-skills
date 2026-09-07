@@ -77,6 +77,9 @@ templates bundled with this skill:
 - `templates/release/cargo-calver-day-serial.release.toml` plus `templates/release/scripts/calver_day_serial.py` for `YYYYMMDD.0.N` CalVer where the final numeric component starts at `0` each date
 - `templates/release/semver-version-file-github.release.toml` for a repository
   that keeps SemVer in a plain `VERSION` file
+- `templates/release/tag-only-github.release.toml` for a repository that
+  publishes arbitrary version strings as GitHub tags without changing a
+  manifest or version file
 
 Copy the closest template and `templates/release/scripts/release.py` into the
 target repo. Edit the copies. Do not rebuild the same `release.toml` shape from
@@ -88,6 +91,8 @@ When creating or updating the workflow:
 - make `--dry-run` available for previewing the mutating sequence
 - prefer `uv run scripts/release.py run --dry-run --bump patch|minor|major --json` and `uv run scripts/release.py run --apply --bump patch|minor|major --json` when a SemVer repo can safely derive the exact next version from the current manifest
 - keep `--bump` mutually exclusive with `--version`; use `--version <v>` for exact requested versions, prereleases, build metadata, CalVer, date tags, or repo-specific policy
+- treat consumer versions as opaque strings unless the selected Cargo or
+  version-file runner explicitly requires SemVer
 - have the runner execute the repo's explicit local checkout checks before publication when no checked-in CI/release workflow owns that validation
 - if checked-in GitHub Actions, Gitea Actions, GitLab CI, or equivalent workflows exist, make the runner invoke, monitor, or clearly defer to those workflows according to the repo's documented release gate
 - add read-only version query commands when useful and expose them through

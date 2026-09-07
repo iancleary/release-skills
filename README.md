@@ -12,9 +12,14 @@ This repository is the canonical source for three complementary skills:
   `release.toml` contract through the bundled Python runner.
 
 The `create-release-process` package also owns the standard-library Python
-runner and reusable Cargo, version-file SemVer, and CalVer templates under
+runner and reusable Cargo, version-file SemVer, CalVer, and arbitrary tag-only
+templates under
 [`templates/release`](skills/create-release-process/templates/release/README.md).
 Target repositories run the copied script with `uv`; Forge is not required.
+
+This repository uses SemVer for its own releases. Consumer repositories keep
+their own version policy. Exact consumer versions are opaque Git-tag-safe
+strings; only runners that offer `--bump major|minor|patch` require SemVer.
 
 ## Install
 

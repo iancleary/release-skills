@@ -23,7 +23,14 @@ uv run scripts/release.py run --apply --bump minor --json
 
 Use `--version <v>` only when the user or repository contract requires an exact
 version, prerelease, build metadata, CalVer, date tag, or another specific
-version. Do not pass both `--bump` and `--version`.
+version. Consumer versions are otherwise opaque; only SemVer-specific runners
+interpret their structure. Do not pass both `--bump` and `--version`.
+
+For example, a tag-only CalVer repository can use:
+
+```sh
+uv run scripts/release.py run --dry-run --version 2026.09.07.0 --json
+```
 
 ## Required Sequence
 

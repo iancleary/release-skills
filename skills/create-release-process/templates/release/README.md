@@ -22,3 +22,9 @@ Keep the Python scripts standard-library only when adapting them.
 Use `semver-version-file-github.release.toml` when a repository has no package
 manifest and stores its released version in a plain `VERSION` file. Replace the
 example check command with the repository's complete local validation command.
+
+Use `tag-only-github.release.toml` when a repository publishes a Git tag and
+GitHub release without changing a manifest or version file. Pass the exact
+consumer version with `--version`; it can be CalVer or another Git-tag-safe
+scheme. Configure `current_version_command` and `next_version_command` when the
+repository can derive those values deterministically.

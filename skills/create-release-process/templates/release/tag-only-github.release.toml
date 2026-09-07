@@ -1,0 +1,16 @@
+[release]
+name = "example-tag-only-project"
+runner = [
+  "uv", "run", "scripts/release.py", "tag-release",
+  "--provider", "github",
+  "--tag-prefix", "",
+  "--branch", "main",
+  "--check", "./scripts/check.sh",
+]
+dry_run_args = ["--dry-run"]
+publish = true
+
+[checks]
+commands = [
+  ["./scripts/check.sh"],
+]

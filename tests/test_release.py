@@ -54,6 +54,15 @@ class ReleaseScriptTests(unittest.TestCase):
             with self.assertRaisesRegex(release.ReleaseError, "unsupported legacy"):
                 release.load_config(repo, "release.toml")
 
+    def test_config_allows_empty_argument_value(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            repo = Path(directory).resolve()
+            (repo / "release.toml").write_text(
+                '[release]\nname = "demo"\nrunner = ["tool", "--tag-prefix", ""]\n'
+            )
+            _, config = release.load_config(repo, "release.toml")
+            self.assertEqual(config["release"]["runner"][-1], "")
+
     def test_check_reports_each_command(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             repo = Path(directory).resolve()
@@ -180,6 +189,64 @@ dry_run_args = ["--dry-run"]
             self.assertEqual((repo / "VERSION").read_text(), "0.1.0\n")
             self.assertEqual(run("git", "status", "--short", cwd=repo).stdout, "")
             self.assertEqual(run("git", "tag", "--list", cwd=repo).stdout, "")
+
+    def test_release_toml_runs_tag_only_non_semver_release(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            test_root = Path(directory).resolve()
+            repo = test_root / "repo"
+            remote = test_root / "remote.git"
+            repo.mkdir()
+            run("git", "init", "--bare", str(remote), cwd=test_root)
+            run("git", "init", "-b", "main", cwd=repo)
+            run("git", "config", "user.name", "Release Test", cwd=repo)
+            run("git", "config", "user.email", "release@example.invalid", cwd=repo)
+            run("git", "remote", "add", "origin", str(remote), cwd=repo)
+            (repo / "scripts").mkdir()
+            (repo / "scripts" / "release.py").write_bytes(SCRIPT.read_bytes())
+            (repo / "README.md").write_text("test\n")
+            (repo / "release.toml").write_text(
+                f"""
+[release]
+name = "calendar-project"
+runner = [
+  "{sys.executable}", "scripts/release.py", "tag-release",
+  "--provider", "github",
+  "--tag-prefix", "",
+]
+dry_run_args = ["--dry-run"]
+""".lstrip()
+            )
+            run("git", "add", ".", cwd=repo)
+            run("git", "commit", "-m", "test fixture", cwd=repo)
+
+            completed = subprocess.run(
+                [
+                    sys.executable,
+                    "scripts/release.py",
+                    "run",
+                    "--dry-run",
+                    "--version",
+                    "2026.09.07.0",
+                    "--json",
+                ],
+                cwd=repo,
+                check=False,
+                text=True,
+                capture_output=True,
+            )
+
+            self.assertEqual(completed.returncode, 0, completed.stderr or completed.stdout)
+            result = json.loads(completed.stdout)
+            self.assertEqual(result["mode"], "dry_run")
+            self.assertIn("Dry run succeeded for 2026.09.07.0", result["runner_stdout"])
+            self.assertEqual(run("git", "tag", "--list", cwd=repo).stdout, "")
+
+    def test_tag_release_rejects_invalid_git_tag(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            repo = Path(directory).resolve()
+            run("git", "init", "-b", "main", cwd=repo)
+            with self.assertRaisesRegex(release.ReleaseError, "invalid Git tag"):
+                release.release_tag(repo, "release~candidate", "")
 
     def test_release_toml_runs_bundled_cargo_runner_end_to_end(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

@@ -34,7 +34,7 @@ class CommandResult:
 def command(value: Any, label: str) -> list[str]:
     if not isinstance(value, list) or not value:
         raise ReleaseError(f"{label} must be a non-empty string array")
-    if not all(isinstance(part, str) and part.strip() for part in value):
+    if not all(isinstance(part, str) for part in value) or not value[0].strip():
         raise ReleaseError(f"{label} must be a non-empty string array")
     if value[0].startswith("builtin:"):
         raise ReleaseError(f"{label} uses unsupported legacy command {value[0]}")
@@ -214,6 +214,16 @@ def validate_semver(version: str) -> None:
         raise ReleaseError("--version must be a SemVer value like 1.2.3")
 
 
+def release_tag(repo: Path, version: str, tag_prefix: str) -> str:
+    if not version or version != version.strip():
+        raise ReleaseError("--version must be a non-empty value without surrounding whitespace")
+    tag = f"{tag_prefix}{version}"
+    result = run_command(repo, ["git", "check-ref-format", f"refs/tags/{tag}"])
+    if not result.ok:
+        raise ReleaseError(f"version and tag prefix produce an invalid Git tag: {tag}")
+    return tag
+
+
 def bump_semver(version: str, bump: str) -> str:
     if "-" in version or "+" in version:
         raise ReleaseError(
@@ -326,7 +336,14 @@ def prepare_release(
     validate_semver(version)
     if version == current:
         raise ReleaseError(f"target version matches current version ({version})")
-    tag = f"{args.tag_prefix}{version}"
+    tag, notes_path = prepare_tag(repo, version, args)
+    return version, tag, notes_path
+
+
+def prepare_tag(
+    repo: Path, version: str, args: argparse.Namespace
+) -> tuple[str, Path | None]:
+    tag = release_tag(repo, version, args.tag_prefix)
     notes_path = repo_file(repo, args.notes_file, "notes file") if args.notes_file else None
     if notes_path and not notes_path.is_file():
         raise ReleaseError(f"notes file not found: {args.notes_file}")
@@ -343,7 +360,7 @@ def prepare_release(
         auth = ["gh", "auth", "status"] if args.provider == "github" else ["tea", "login", "list"]
         require_success(run_command(repo, auth))
     ensure_tag_absent(repo, tag)
-    return version, tag, notes_path
+    return tag, notes_path
 
 
 def publish_release(
@@ -389,6 +406,24 @@ def version_file_release(repo: Path, args: argparse.Namespace) -> int:
     finally:
         if args.dry_run:
             version_path.write_bytes(original)
+
+
+def tag_release(repo: Path, args: argparse.Namespace) -> int:
+    if not args.version:
+        raise ReleaseError("--version is required for a tag-only release")
+    tag, notes_path = prepare_tag(repo, args.version, args)
+
+    for check_text in args.check:
+        require_success(run_command(repo, shlex.split(check_text)))
+    if args.dry_run:
+        print(f"Dry run succeeded for {tag}.")
+        return 0
+
+    git(repo, "tag", "-a", tag, "-m", f"Release {tag}")
+    git(repo, "push", "origin", tag)
+    publish_release(repo, args, tag, notes_path)
+    print(f"release ready: {tag}")
+    return 0
 
 
 def cargo_release(repo: Path, args: argparse.Namespace) -> int:
@@ -478,6 +513,18 @@ def parse_args() -> argparse.Namespace:
     version_release.add_argument("--notes-file")
     version_release.add_argument("--not-latest", action="store_true")
     version_release.add_argument("--dry-run", action="store_true")
+
+    tag_only = subparsers.add_parser("tag-release")
+    tag_only.add_argument("--repo-path", default=".")
+    tag_only.add_argument("--provider", choices=("github", "gitea"), default="github")
+    tag_only.add_argument("--tag-prefix", default="")
+    tag_only.add_argument("--branch", default="main")
+    tag_only.add_argument("--check", action="append", default=[])
+    tag_only.add_argument("--notes-required", action="store_true")
+    tag_only.add_argument("--version")
+    tag_only.add_argument("--notes-file")
+    tag_only.add_argument("--not-latest", action="store_true")
+    tag_only.add_argument("--dry-run", action="store_true")
     return parser.parse_args()
 
 
@@ -498,6 +545,8 @@ def main() -> int:
             return version_file_current(repo, args)
         if args.action == "version-file-release":
             return version_file_release(repo, args)
+        if args.action == "tag-release":
+            return tag_release(repo, args)
         if args.action == "cargo-release":
             if not args.version_target:
                 args.version_target = [args.version_source]
