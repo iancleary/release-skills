@@ -1,5 +1,7 @@
 # Release Process Templates
 
+Source: https://github.com/iancleary/release-skills
+
 These templates are starting points for repositories that use the bundled
 Python runner and its `release.toml` contract.
 

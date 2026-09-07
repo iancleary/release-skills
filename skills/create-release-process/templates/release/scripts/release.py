@@ -1,4 +1,6 @@
 #!/usr/bin/env -S uv run --script
+# Source: https://github.com/iancleary/release-skills
+# Keep this runner unchanged; record its revision and checksum in release.toml [runner_source].
 # /// script
 # requires-python = ">=3.11"
 # ///

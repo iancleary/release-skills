@@ -1,3 +1,4 @@
+# Release workflow: https://github.com/iancleary/release-skills
 [release]
 runner_protocol = "prepared-v1"
 name = "example-gitea-crate"

@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# Source: https://github.com/iancleary/release-skills
 from __future__ import annotations
 
 import argparse
