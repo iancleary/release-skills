@@ -50,6 +50,20 @@ Run the repository check after changing a skill, template, or validation rule:
 The check validates skill packages, TOML templates, the CalVer helper, template
 invariants, and Git whitespace.
 
+## Releases
+
+Read `docs/release.md` before release work.
+
+- Use `create-release-process` to maintain this workflow.
+- Use `release-runner` for an ordinary release.
+- Use `uv run scripts/release.py check --json` and
+  `uv run scripts/release.py plan --json` for read-only inspection.
+- Use `uv run scripts/release.py run --dry-run --bump <level> --json` to verify
+  release intent.
+- Run `--apply` only when the user explicitly asks to publish a release.
+- Keep `VERSION`, `release.toml`, `docs/release.md`, and both checked-in runner
+  copies aligned. `scripts/check.sh` rejects runner drift.
+
 ## Safety
 
 - Do not publish, push, tag, or upload a release while maintaining these skills.
