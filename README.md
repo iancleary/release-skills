@@ -2,6 +2,27 @@
 
 Reusable Codex skills for deterministic release workflows.
 
+## Prompt for Your Agent
+
+Give your agent this repository URL and the following prompt. "This repo"
+means the consuming project where you want a release workflow.
+
+> Use https://github.com/iancleary/release-skills to set up or execute this
+> repo's release workflow. Preserve the repo's version policy—SemVer, CalVer,
+> or another documented scheme. Use `create-release-process` for setup or
+> maintenance, `release-runner` for the bundled Python `release.toml` workflow,
+> and `cut-release` for another existing runner. Keep repository policy in
+> TOML and small helpers, pin the unchanged shared runner by commit and
+> checksum, and verify checks, planning, and dry-run before publishing.
+> Publish only when explicitly requested. Install skills project-locally if
+> needed; do not install globally.
+
+Agents arriving from the URL should read the relevant linked `SKILL.md`
+below before acting. See [install.md](install.md) only if installation is
+needed. A repository URL alone does not authorize publication.
+
+## Skills
+
 This repository is the canonical source for three complementary skills:
 
 - [`create-release-process`](skills/create-release-process/SKILL.md) creates,

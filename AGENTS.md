@@ -2,6 +2,31 @@
 
 Guidance for contributors and coding agents working in `iancleary/release-skills`.
 
+## Agent Entry Prompt
+
+When a user supplies this repository URL to configure a consuming project's
+releases, start with the [README prompt](README.md#prompt-for-your-agent):
+
+> Use https://github.com/iancleary/release-skills to set up or execute this
+> repo's release workflow. Preserve the repo's version policy—SemVer, CalVer,
+> or another documented scheme. Use `create-release-process` for setup or
+> maintenance, `release-runner` for the bundled Python `release.toml` workflow,
+> and `cut-release` for another existing runner. Keep repository policy in
+> TOML and small helpers, pin the unchanged shared runner by commit and
+> checksum, and verify checks, planning, and dry-run before publishing.
+> Publish only when explicitly requested. Install skills project-locally if
+> needed; do not install globally.
+
+"This repo" in the prompt means the consuming project, not `release-skills`.
+Read its local instructions and the selected skill before acting:
+
+- [create-release-process](skills/create-release-process/SKILL.md)
+- [release-runner](skills/release-runner/SKILL.md)
+- [cut-release](skills/cut-release/SKILL.md)
+
+Keep both prompt copies aligned. A URL alone does not authorize publication.
+The remaining instructions govern maintenance of `release-skills` itself.
+
 ## Purpose
 
 This repository owns reusable release workflow skills, a portable Python
