@@ -199,6 +199,15 @@ class VerifiedContractTests(unittest.TestCase):
         with self.assertRaisesRegex(release.ReleaseError, "remote release tag"):
             release.verify_resume_tag(self.repo, "release", release.git(self.repo, "rev-parse", "HEAD"))
 
+    def test_resume_rejects_conflicting_local_tag(self):
+        run("git", "tag", "release", cwd=self.repo)
+        run("git", "push", "origin", "refs/tags/release", cwd=self.repo)
+        (self.repo / "VERSION").write_text("2.0.0\n")
+        self.commit()
+        run("git", "tag", "-f", "release", cwd=self.repo)
+        with self.assertRaisesRegex(release.ReleaseError, "local release tag"):
+            release.verify_resume_tag(self.repo, "release", self.head)
+
     def test_resume_stops_on_auth_or_network_error(self):
         args = self.args(resume=True)
         failure = release.CommandResult(["gh"], False, 1, "HTTP/2 403 Forbidden\n\n{}", "denied")

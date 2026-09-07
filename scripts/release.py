@@ -193,7 +193,9 @@ def execute_plan(repo: Path, config_path: Path, config: dict[str, Any], args=Non
     if result["version"] is not None:
         validate_consumer_version(repo, config, result["version"])
     result["tag"] = None
-    if config["release"].get("runner_protocol") == "prepared-v1" and result["version"]:
+    if (config["release"].get("runner_protocol") == "prepared-v1" and result["version"]
+            and any(action in config["release"]["runner"] for action in
+                    ("tag-release", "cargo-release", "version-file-release"))):
         runner = config["release"]["runner"]
         prefix = "" if "tag-release" in runner else "v"
         if "--tag-prefix" in runner and runner.index("--tag-prefix") + 1 < len(runner):
@@ -466,7 +468,8 @@ def verify_resume_tag(repo: Path, tag: str, expected: str) -> None:
     if target != expected:
         raise ReleaseError("remote release tag does not match --expected-head")
     local = run_command(repo, ["git", "rev-parse", "--verify", f"refs/tags/{tag}^{{commit}}"])
-    if local.ok and local.stdout.strip() != expected:
+    local_ref = run_command(repo, ["git", "show-ref", "--verify", "--quiet", f"refs/tags/{tag}"])
+    if local_ref.ok and (not local.ok or local.stdout.strip() != expected):
         raise ReleaseError("local release tag does not match --expected-head")
 
 
