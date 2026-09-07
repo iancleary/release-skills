@@ -53,6 +53,7 @@ release-skills/
     │       ├── cargo-semver-exact.release.toml
     │       ├── cargo-semver-gitea.release.toml
     │       ├── cargo-semver-github.release.toml
+    │       ├── semver-version-file-github.release.toml
     │       └── scripts/
     │           ├── calver_day_serial.py
     │           └── release.py
@@ -206,7 +207,8 @@ Do not combine changes from different repositories into one commit or overlap mu
 ## Acceptance Criteria
 
 - `iancleary/release-skills` is the only source repository for the three release skills.
-- The CalVer and three SemVer templates exist once in the new repository.
+- The CalVer, Cargo SemVer, and version-file SemVer templates exist once in the
+  new repository.
 - The templates use the checked-in Python runner through `uv`, not Forge
   built-ins.
 - All three skill names remain installed and discoverable.

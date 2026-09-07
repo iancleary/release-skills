@@ -75,6 +75,8 @@ templates bundled with this skill:
 - `templates/release/cargo-semver-exact.release.toml` for exact versions, prereleases, build metadata, or required curated notes
 - `templates/release/cargo-semver-gitea.release.toml` for Gitea or Forgejo releases through `tea`
 - `templates/release/cargo-calver-day-serial.release.toml` plus `templates/release/scripts/calver_day_serial.py` for `YYYYMMDD.0.N` CalVer where the final numeric component starts at `0` each date
+- `templates/release/semver-version-file-github.release.toml` for a repository
+  that keeps SemVer in a plain `VERSION` file
 
 Copy the closest template and `templates/release/scripts/release.py` into the
 target repo. Edit the copies. Do not rebuild the same `release.toml` shape from

@@ -18,3 +18,7 @@ versions like `YYYYMMDD.0.0`, `YYYYMMDD.0.1`, and the next date's
 `YYYYMMDD.0.0`. The final numeric component starts at `0` each date.
 
 Keep the Python scripts standard-library only when adapting them.
+
+Use `semver-version-file-github.release.toml` when a repository has no package
+manifest and stores its released version in a plain `VERSION` file. Replace the
+example check command with the repository's complete local validation command.

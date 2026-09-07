@@ -144,6 +144,43 @@ dry_run_args = ["--dry-run"]
             self.assertEqual(run("git", "status", "--short", cwd=repo).stdout, "")
             self.assertEqual(run("git", "tag", "--list", cwd=repo).stdout, "")
 
+    def test_version_file_dry_run_restores_version(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            test_root = Path(directory).resolve()
+            repo = test_root / "repo"
+            remote = test_root / "remote.git"
+            repo.mkdir()
+            run("git", "init", "--bare", str(remote), cwd=test_root)
+            run("git", "init", "-b", "main", cwd=repo)
+            run("git", "config", "user.name", "Release Test", cwd=repo)
+            run("git", "config", "user.email", "release@example.invalid", cwd=repo)
+            run("git", "remote", "add", "origin", str(remote), cwd=repo)
+            (repo / "VERSION").write_text("0.1.0\n")
+            run("git", "add", "VERSION", cwd=repo)
+            run("git", "commit", "-m", "test fixture", cwd=repo)
+
+            args = argparse.Namespace(
+                version_file="VERSION",
+                version=None,
+                bump="minor",
+                tag_prefix="v",
+                notes_file=None,
+                notes_required=False,
+                dry_run=True,
+                branch="main",
+                provider="github",
+                check=[f"{sys.executable} -c pass"],
+                not_latest=False,
+            )
+            output = io.StringIO()
+            with contextlib.redirect_stdout(output):
+                self.assertEqual(release.version_file_release(repo, args), 0)
+
+            self.assertIn("Dry run succeeded for v0.2.0", output.getvalue())
+            self.assertEqual((repo / "VERSION").read_text(), "0.1.0\n")
+            self.assertEqual(run("git", "status", "--short", cwd=repo).stdout, "")
+            self.assertEqual(run("git", "tag", "--list", cwd=repo).stdout, "")
+
     def test_release_toml_runs_bundled_cargo_runner_end_to_end(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             test_root = Path(directory).resolve()
@@ -199,6 +236,7 @@ dry_run_args = ["--dry-run"]
             result = json.loads(completed.stdout)
             self.assertEqual(result["mode"], "dry_run")
             self.assertTrue(result["executed"])
+            self.assertIn("Dry run succeeded for demo v1.2.4", result["runner_stdout"])
             self.assertEqual((repo / "Cargo.toml").read_text(), manifest)
             self.assertEqual((repo / "Cargo.lock").read_text(), lockfile)
             self.assertEqual(run("git", "status", "--short", cwd=repo).stdout, "")

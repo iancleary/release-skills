@@ -12,7 +12,7 @@ This repository is the canonical source for three complementary skills:
   `release.toml` contract through the bundled Python runner.
 
 The `create-release-process` package also owns the standard-library Python
-runner and reusable Cargo SemVer and CalVer templates under
+runner and reusable Cargo, version-file SemVer, and CalVer templates under
 [`templates/release`](skills/create-release-process/templates/release/README.md).
 Target repositories run the copied script with `uv`; Forge is not required.
 
@@ -34,8 +34,26 @@ Add `-g` for a user-global installation.
 ```
 
 The check validates all three skill packages, parses every TOML template,
-checks the CalVer helper, asserts the template contracts, and runs
-`git diff --check`.
+checks the CalVer helper, asserts the template contracts, verifies both
+checked-in runner copies, and runs `git diff --check`. Validation uses only
+files in this repository and Python's standard library.
+
+## Releases
+
+This repository uses Semantic Versioning. The current version lives in
+[`VERSION`](VERSION), and the release contract lives in
+[`release.toml`](release.toml).
+
+Use the repository's own skills and runner:
+
+```sh
+uv run scripts/release.py check --json
+uv run scripts/release.py plan --json
+uv run scripts/release.py run --dry-run --bump patch --json
+```
+
+See [`docs/release.md`](docs/release.md) for version policy and the explicit
+publish path.
 
 ## Migration Provenance
 

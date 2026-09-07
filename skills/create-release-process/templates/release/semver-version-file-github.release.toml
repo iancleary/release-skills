@@ -1,0 +1,22 @@
+[release]
+name = "example-semver-project"
+version_source = "VERSION"
+runner = [
+  "uv", "run", "scripts/release.py", "version-file-release",
+  "--provider", "github",
+  "--version-file", "VERSION",
+  "--tag-prefix", "v",
+  "--branch", "main",
+  "--check", "./scripts/check.sh",
+]
+dry_run_args = ["--dry-run"]
+current_version_command = [
+  "uv", "run", "scripts/release.py", "version-file-current",
+  "--version-file", "VERSION",
+]
+publish = true
+
+[checks]
+commands = [
+  ["./scripts/check.sh"],
+]
