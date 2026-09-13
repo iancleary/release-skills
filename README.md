@@ -36,7 +36,8 @@ The `create-release-process` package also owns the standard-library Python
 runner and reusable Cargo, version-file SemVer, CalVer, and arbitrary tag-only
 templates under
 [`templates/release`](skills/create-release-process/templates/release/README.md).
-Target repositories run the copied script with `uv`; Forge is not required.
+Target repositories run the copied script with `uv`; no external tool manager
+is required.
 
 This repository uses SemVer for its own releases. Consumer repositories keep
 their own version policy. Exact consumer versions are opaque Git-tag-safe

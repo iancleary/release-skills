@@ -13,8 +13,8 @@ content.
 
 Determine whether the requested scope is repository-local, user-global, or
 managed by a machine policy tool. Inspect the current skill listing before
-changing it. If Forge or another policy manager owns skill installation, use
-that policy-managed target.
+changing it. Use the policy-managed target when a machine policy tool owns skill
+installation.
 
 Do not remove old source copies during this step. The migration gate passes only
 after the replacement installation is verified.
