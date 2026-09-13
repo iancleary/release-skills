@@ -1,6 +1,6 @@
 ---
 name: release-runner
-description: "Use a repo-local Python runner and release.toml to check, plan, dry-run, or apply deterministic release workflows without reconstructing release steps by hand."
+description: "Check, plan, or execute releases using the bundled Python release.toml and scripts/release.py contract. Use cut-release for other existing runners."
 ---
 
 # Release Runner
@@ -54,7 +54,8 @@ uv run scripts/release.py run --dry-run --version 2026.09.07.0 --json
 uv run scripts/release.py check --json
 ```
 
-3. Stop if the result reports `ready: false`. Otherwise run:
+3. If `ready: false`, pause release execution and diagnose the failed check.
+   Continue only after the gate passes. Otherwise run:
 
 ```sh
 uv run scripts/release.py plan --json
@@ -88,7 +89,10 @@ Use the same verified release intent for apply.
 - Do not substitute manual publish, tag, version bump, or release commands
   unless the checked-in runner is broken and the user explicitly asks for
   repair.
-- Stop on a failed check, a JSON error, or a runner failure.
+- A failed check, JSON error, or runner failure blocks dependent publication.
+  Continue safe diagnosis and repairs already within the requested scope.
+  Rerun the failed gate after repair; never bypass it. Ask before unrelated
+  changes to release machinery or manual recovery outside the runner contract.
 
 ## Output
 

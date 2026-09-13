@@ -1,6 +1,6 @@
 ---
 name: cut-release
-description: "Execute an existing repo-local release workflow for an ordinary release request by reading local release instructions, validating the intended version and notes path, then running the checked-in release runner instead of reconstructing the flow by hand."
+description: "Execute an existing repository release runner. Use release-runner for the bundled Python release.toml contract, and create-release-process for workflow maintenance."
 ---
 
 # Cut Release
@@ -31,7 +31,7 @@ available for that command contract.
 
 Before running anything mutating:
 
-- read repo-local instructions such as `AGENTS.md`, `CLAUDE.md`, `README.md`, and `docs/release.md`
+- follow applicable repo instructions and read the documentation that owns the release contract
 - inspect the task runner and release script named by those instructions
 - identify the versioning scheme, such as SemVer, CalVer, or repo-specific date tags
 - identify whether the repo accepts a release intent such as `--bump patch|minor|major`, can infer the next version, or requires `--version`
@@ -94,4 +94,7 @@ Report:
 
 Release runners may commit, push, tag, upload artifacts, publish packages, deploy, or create public releases.
 
-If the repo is not in a safe release state, stop and explain why instead of forcing the flow.
+If the repo is not in a safe release state, pause publication and diagnose the
+blocker. Continue repairs within the authorized scope and rerun failed gates.
+Ask before unrelated workflow changes or manual recovery outside the contract.
+Do not bypass a failed gate to force publication.

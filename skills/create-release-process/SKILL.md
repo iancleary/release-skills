@@ -1,6 +1,6 @@
 ---
 name: create-release-process
-description: "Create, audit, or update a repo-local release process by discovering the repo's versioning, notes, validation, and publish requirements, then leaving a checked-in runner plus local agent instructions that future releases can execute deterministically."
+description: "Create, audit, or repair a repository release workflow. Use for workflow maintenance or setup, not ordinary execution of an existing runner."
 ---
 
 # Create Release Process
@@ -22,7 +22,8 @@ This is a portable skill. It should adapt to the target repo instead of imposing
 - the task is only to query a current or next version through an existing read-only command
 - the user is correcting an already-published release and needs explicit repair steps
 
-For ordinary release execution, use `cut-release` after this workflow exists.
+For ordinary execution, use `release-runner` for the bundled Python
+`release.toml` contract, or `cut-release` for another existing runner.
 
 ## Discovery
 
