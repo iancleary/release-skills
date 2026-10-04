@@ -86,6 +86,10 @@ Copy the closest template and `templates/release/scripts/release.py` into the
 target repo. Edit the copies. Do not rebuild the same `release.toml` shape from
 scratch when one of these templates is close.
 
+For a `just` wrapper, use the supported `templates/release/release.just`
+recipe and preserve positional argument forwarding. Verify the actual consumer
+task-runner boundary; direct subprocess tests do not prove wrapper safety.
+
 Keep the runner unchanged. Customize TOML and small consumer policy helpers.
 Read `templates/release/README.md` for check enforcement, the prepared-v1
 protocol, plan guards, recovery, and runner provenance before adapting a template.

@@ -31,6 +31,26 @@ consumer version with `--version`; it can be CalVer or another Git-tag-safe
 scheme. Configure `current_version_command` and `next_version_command` when the
 repository can derive those values deterministically.
 
+## Literal Task-Runner Wrapper
+
+Consumers that use `just` can copy [`release.just`](release.just) into their
+justfile. The recipe requires a just version that supports the
+`[positional-arguments]` attribute. It forwards each caller argument through
+`"$@"` to `uv run scripts/release.py`. Do not interpolate `{{args}}` into shell
+source or join arguments into a shell command. Pass notes paths as one quoted
+CLI argument, for example:
+
+```sh
+just release run --dry-run --notes-file 'notes with spaces.md' --bump patch
+```
+
+The owner check executes the actual `just` recipe against a recording `uv`
+fixture. It asserts exact arguments and no shell execution for spaces, quotes,
+empty arguments, newlines, and shell metacharacters. A negative control proves
+that the fixture detects unsafe interpolation. Consumers own adoption and must
+verify their complete task-runner boundary after adapting the recipe. This
+wrapper does not change release authorization or consumer policy.
+
 ## Execution Contract
 
 Declare validation once in `[checks].commands` as argument arrays. The `run`

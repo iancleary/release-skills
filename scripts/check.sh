@@ -14,6 +14,7 @@ fail() {
   exit 1
 }
 
+command -v just >/dev/null 2>&1 || fail "just is required for actual release wrapper boundary tests"
 command -v uv >/dev/null 2>&1 || fail "uv is required to run the Codex skill validator"
 [ -x "$VALIDATOR" ] || fail "skill validator must be executable"
 [ -x "$CALVER_HELPER" ] || fail "CalVer helper must be executable"

@@ -67,8 +67,9 @@ Add `-g` for a user-global installation.
 
 The check validates all three skill packages, parses every TOML template,
 checks the CalVer helper, asserts the template contracts, verifies both
-checked-in runner copies, and runs `git diff --check`. Validation uses only
-files in this repository and Python's standard library.
+checked-in runner copies, and runs `git diff --check`. Validation uses files
+in this repository, Python's standard library, `uv`, and `just`. The actual `just` wrapper boundary tests require `just` and fail
+when it is unavailable.
 
 ## Releases
 
